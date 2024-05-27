@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException, Request, Depends, Response
 from sqlalchemy.orm import Session
 from config.settings import settings
 from database import captcha_helper
+from routers.limiter import limiter
 
 
 router = APIRouter(prefix="/captcha")
@@ -26,6 +27,7 @@ def generate_secure_string(length: int = settings.captcha_length) -> string:
 
 
 @router.get("/")
+@limiter.limit("10/minute", key_func=lambda: "get_captcha")
 def get_captcha(request: Request, db: Session = Depends(get_db)) -> Response:
     secure_string: string = generate_secure_string()
     db_captcha: models.DBCaptcha = captcha_helper.generate_captcha(db, schemas.CreateCaptcha(value=secure_string))
@@ -40,6 +42,7 @@ def get_captcha(request: Request, db: Session = Depends(get_db)) -> Response:
 
 
 @router.post("/")
+@limiter.limit("10/minute", key_func=lambda: "post_captcha")
 def post_captcha(request: Request, captcha: schemas.ReadCaptcha, db: Session = Depends(get_db)) -> Response:
     try:
         db_captcha = captcha_helper.get_captcha(db, captcha.id)
