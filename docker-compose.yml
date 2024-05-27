@@ -1,5 +1,16 @@
 version: "3.9"
 services:
+  db:
+    image: "postgres:13.10-alpine"
+    container_name: cooking-captchas-db
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "9001:5432"
+    env_file:
+      - ./docker/config/.env
+
   web:
     image: "cooking-captchas-be"
     container_name: cooking-captchas-be
@@ -8,6 +19,11 @@ services:
     build:
       context: .
       dockerfile: ./docker/fastapi/Dockerfile
+    depends_on:
+      - db
     env_file:
       - ./docker/config/.env
     command: ./docker/fastapi/local_run.sh
+
+volumes:
+  pgdata:
