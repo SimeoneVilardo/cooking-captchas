@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  web:
+    image: "cooking-captchas-be"
+    container_name: cooking-captchas-be
+    ports:
+      - "9000:8000"
+    build:
+      context: .
+      dockerfile: ./docker/fastapi/Dockerfile
+    env_file:
+      - ./docker/config/.env
+    command: ./docker/fastapi/local_run.sh
