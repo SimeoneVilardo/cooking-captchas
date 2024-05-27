@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     app_name: str = "Cooking Captchas"
+    openapi_url: str = "/openapi.json"
     db_username: str = os.getenv("DB_USERNAME", None)
     db_password: str = os.getenv("DB_PASSWORD", None)
     db_host: str = os.getenv("DB_HOST", None)

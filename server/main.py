@@ -5,8 +5,9 @@ from database.core import engine
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from routers.limiter import limiter
+from config.settings import settings
 
-app = FastAPI()
+app = FastAPI(openapi_url=settings.openapi_url)
 
 models.Base.metadata.create_all(bind=engine)
 
