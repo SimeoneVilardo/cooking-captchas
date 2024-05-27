@@ -38,3 +38,20 @@ def generate_captcha(db: Session, captcha: schemas.CreateCaptcha) -> models.DBCa
     db.commit()
     db.refresh(db_captcha)
     return db_captcha
+
+
+def validate_captcha(db: Session, user_captcha: schemas.ReadCaptcha, db_captcha: models.DBCaptcha):
+    _check_captcha(user_captcha, db_captcha)
+    db_captcha.is_used = True
+    db.commit()
+    db.refresh(db_captcha)
+    return db_captcha
+
+
+def _check_captcha(user_captcha: schemas.ReadCaptcha, db_captcha: models.DBCaptcha) -> None:
+    if db_captcha.created_at < datetime.datetime.now() - datetime.timedelta(settings.validity_minutes):
+        raise CaptchaExpiredException()
+    if db_captcha.is_used:
+        raise CaptchaAlreadySolvedException()
+    if db_captcha.value != user_captcha.value:
+        raise CaptchaInvalidException()

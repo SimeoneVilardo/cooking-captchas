@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     db_name: str = os.getenv("DB_NAME", None)
     captcha_length: int = 6
     alphabet: str = "".join(string.ascii_uppercase) + "".join(string.digits)
+    validity_minutes: int = 5
 
 
 settings = Settings()
