@@ -1,7 +1,8 @@
+from typing import Generator
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 
 from database.core import get_db
@@ -9,7 +10,7 @@ from database import models
 from main import app
 from utils.captcha_generator import CaptchaGenerator, FakeSecureStringGenerator, get_captcha_generator
 
-SQLALCHEMY_DATABASE_URL = "sqlite://"
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -19,15 +20,14 @@ engine = create_engine(
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-models.Base.metadata.create_all(bind=engine)
-
-
 def override_get_db():
     try:
+        models.Base.metadata.create_all(bind=engine)
         db = TestingSessionLocal()
         yield db
     finally:
         db.close()
+        models.Base.metadata.drop_all(bind=engine)
 
 
 def override_get_captcha_generator():

@@ -11,7 +11,7 @@ from database import models
 from main import app
 from utils.captcha_generator import CaptchaGenerator, FakeSecureStringGenerator, get_captcha_generator
 
-SQLALCHEMY_DATABASE_URL = "sqlite://"
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -46,10 +46,12 @@ def simple_captchas(session: Session) -> Generator[Dict[int, models.DBCaptcha], 
 
 def override_get_db():
     try:
+        models.Base.metadata.create_all(bind=engine)
         db = TestingSessionLocal()
         yield db
     finally:
         db.close()
+        models.Base.metadata.drop_all(bind=engine)
 
 
 def override_get_captcha_generator():
