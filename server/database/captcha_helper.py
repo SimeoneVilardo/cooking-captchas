@@ -3,26 +3,31 @@ from sqlalchemy.orm import Session
 from config.settings import settings
 
 from database import models, schemas
+from utils.common import ManagedException
 
 
-class CaptchaBaseException(Exception):
+class CaptchaBaseException(ManagedException):
     pass
 
 
 class CaptchaNotFoundException(CaptchaBaseException):
-    pass
+    def __init__(self, detail="Captcha not found", status_code=404):
+        super().__init__(detail, status_code)
 
 
 class CaptchaAlreadySolvedException(CaptchaBaseException):
-    pass
+    def __init__(self, detail="Captcha has already been solved", status_code=409):
+        super().__init__(detail, status_code)
 
 
 class CaptchaExpiredException(CaptchaBaseException):
-    pass
+    def __init__(self, detail="Captcha has expired", status_code=400):
+        super().__init__(detail, status_code)
 
 
 class CaptchaInvalidException(CaptchaBaseException):
-    pass
+    def __init__(self, detail="Captcha is invalid", status_code=400):
+        super().__init__(detail, status_code)
 
 
 def get_captcha(db: Session, id: int):

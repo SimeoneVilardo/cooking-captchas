@@ -6,6 +6,8 @@ from typing import Dict, Type
 from fastapi import Response
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from utils.common import ManagedException
+
 
 class CaptchaResponseHandler(ABC):
     def handle(self, image_bytes: BytesIO, id: int) -> Response: ...
@@ -27,8 +29,9 @@ class CaptchaJpegResponseHandler(CaptchaResponseHandler):
         )
 
 
-class UnsupportedAcceptHeaderException(Exception):
-    pass
+class UnsupportedAcceptHeaderException(ManagedException):
+    def __init__(self, detail="Unsupported accept header", status_code=406):
+        super().__init__(detail, status_code)
 
 
 response_handlers: Dict[str, Type[CaptchaResponseHandler]] = {

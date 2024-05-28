@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from config.settings import settings
 from database import captcha_helper
 from routers.limiter import limiter
-from utils.common import generate_secure_string
+from utils.common import exception_handler, generate_secure_string
 from utils.captcha_response import UnsupportedAcceptHeaderException, get_response_handler
 
 
@@ -39,12 +39,10 @@ image_generator = ImageCaptcha()
     description="Get a new captcha image.",
 )
 @limiter.limit("10/minute", key_func=lambda: "get_captcha")
+@exception_handler()
 def get_captcha(request: Request, db: Session = Depends(get_db)) -> Response:
     accept_header = request.headers.get("accept")
-    try:
-        response_handler = get_response_handler(accept_header)
-    except UnsupportedAcceptHeaderException as e:
-        raise HTTPException(status_code=406, detail="Unsupported accept header")
+    response_handler = get_response_handler(accept_header)
     secure_string: str = generate_secure_string()
     db_captcha: models.DBCaptcha = captcha_helper.generate_captcha(db, schemas.CreateCaptcha(value=secure_string))
     image_bytes = image_generator.generate(secure_string)
@@ -64,21 +62,10 @@ def get_captcha(request: Request, db: Session = Depends(get_db)) -> Response:
     description="Validate the captcha value provided by the user.",
 )
 @limiter.limit("10/minute", key_func=lambda: "post_captcha")
+@exception_handler()
 def post_captcha(request: Request, captcha: schemas.ReadCaptcha, db: Session = Depends(get_db)) -> Response:
-    try:
-        db_captcha = captcha_helper.get_captcha(db, captcha.id)
-    except CaptchaNotFoundException as e:
-        raise HTTPException(status_code=404, detail="Captcha not found")
-
-    try:
-        updated_db_captcha = captcha_helper.validate_captcha(db, captcha, db_captcha)
-    except CaptchaExpiredException as e:
-        raise HTTPException(status_code=400, detail="Captcha expired")
-    except CaptchaAlreadySolvedException as e:
-        raise HTTPException(status_code=409, detail="Captcha already used")
-    except CaptchaInvalidException as e:
-        raise HTTPException(status_code=400, detail="Captcha value incorrect")
-
+    db_captcha = captcha_helper.get_captcha(db, captcha.id)
+    updated_db_captcha = captcha_helper.validate_captcha(db, captcha, db_captcha)
     return Response(
         content=json.dumps({"detail": "Captcha validated successfully"}),
         media_type="application/json",
