@@ -14,11 +14,6 @@ class ManagedException(Exception):
         self.status_code = status_code
 
 
-def generate_secure_string(length: int = settings.captcha_length) -> str:
-    secure_string: str = "".join(secrets.choice(settings.alphabet) for _ in range(length))
-    return secure_string
-
-
 @typing.no_type_check
 def exception_handler(
     exception_type: Type[Exception] = ManagedException, handler: Optional[Callable[[Exception], Any]] = None

@@ -15,11 +15,6 @@ class CaptchaResponseHandler(ABC):
     def handle(self, image_bytes: BytesIO, id: int) -> Response: ...
 
 
-class CaptchaUnsupportedResponseHandler(CaptchaResponseHandler):
-    def handle(self, image_bytes: BytesIO, id: int) -> Response:
-        raise UnsupportedAcceptHeaderException("Unsupported accept header")
-
-
 class CaptchaJsonResponseHandler(CaptchaResponseHandler):
     def handle(self, image_bytes: BytesIO, id: int) -> Response:
         image_base64 = base64.b64encode(image_bytes.getvalue()).decode("utf-8")
@@ -49,5 +44,7 @@ response_handlers: Dict[str, Type[CaptchaResponseHandler]] = {
 
 
 def get_response_handler(accept_header: str) -> CaptchaResponseHandler:
-    handler_class = response_handlers.get(accept_header, CaptchaUnsupportedResponseHandler)
+    handler_class = response_handlers.get(accept_header)
+    if not handler_class:
+        raise UnsupportedAcceptHeaderException()
     return handler_class()

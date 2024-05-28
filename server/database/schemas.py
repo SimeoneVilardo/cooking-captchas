@@ -3,11 +3,11 @@ from pydantic import BaseModel
 
 
 class CaptchaBase(BaseModel):
-    value: str
+    pass
 
 
 class CreateCaptcha(CaptchaBase):
-    pass
+    value: str
 
 
 class ReadCaptcha(CaptchaBase):
@@ -15,8 +15,13 @@ class ReadCaptcha(CaptchaBase):
     value: str
 
 
+class UpdateCaptcha(CaptchaBase):
+    is_used: bool
+
+
 class Captcha(CaptchaBase):
     id: int
+    value: str
     is_used: bool
     created_at: datetime.datetime
 

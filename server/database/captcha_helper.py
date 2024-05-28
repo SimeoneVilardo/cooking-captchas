@@ -30,14 +30,14 @@ class CaptchaInvalidException(CaptchaBaseException):
         super().__init__(detail, status_code)
 
 
-def get_captcha(db: Session, id: int) -> models.DBCaptcha:
+def find_captcha(db: Session, id: int) -> models.DBCaptcha:
     captcha = db.query(models.DBCaptcha).filter(models.DBCaptcha.id == id).first()
     if captcha is None:
         raise CaptchaNotFoundException()
     return captcha
 
 
-def generate_captcha(db: Session, captcha: schemas.CreateCaptcha) -> models.DBCaptcha:
+def create_captcha(db: Session, captcha: schemas.CreateCaptcha) -> models.DBCaptcha:
     db_captcha = models.DBCaptcha(value=captcha.value)
     db.add(db_captcha)
     db.commit()
@@ -45,18 +45,10 @@ def generate_captcha(db: Session, captcha: schemas.CreateCaptcha) -> models.DBCa
     return db_captcha
 
 
-def validate_captcha(db: Session, user_captcha: schemas.ReadCaptcha, db_captcha: models.DBCaptcha) -> models.DBCaptcha:
-    _check_captcha(user_captcha, db_captcha)
-    db_captcha.is_used = True
+def update_captcha(db: Session, id: int, captcha: schemas.UpdateCaptcha) -> models.DBCaptcha:
+    db_captcha = find_captcha(db, id)
+    for key, value in captcha.model_dump().items():
+        setattr(db_captcha, key, value)
     db.commit()
     db.refresh(db_captcha)
     return db_captcha
-
-
-def _check_captcha(user_captcha: schemas.ReadCaptcha, db_captcha: models.DBCaptcha) -> None:
-    if db_captcha.created_at < datetime.datetime.now() - datetime.timedelta(settings.validity_minutes):
-        raise CaptchaExpiredException()
-    if db_captcha.is_used:
-        raise CaptchaAlreadySolvedException()
-    if db_captcha.value != user_captcha.value:
-        raise CaptchaInvalidException()
