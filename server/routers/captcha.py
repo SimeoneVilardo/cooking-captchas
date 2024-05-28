@@ -53,7 +53,8 @@ def get_captcha(
     response_model=schemas.CaptchaResponse,
     responses={
         200: {"description": "Captcha validated successfully", "model": schemas.CaptchaResponse},
-        400: {"description": "Bad Request", "model": schemas.CaptchaResponse},
+        403: {"description": "Captcha invalid", "model": schemas.CaptchaResponse},
+        403: {"description": "Captcha has expired", "model": schemas.CaptchaResponse},
         404: {"description": "Captcha not found", "model": schemas.CaptchaResponse},
         409: {"description": "Captcha already used", "model": schemas.CaptchaResponse},
     },
@@ -64,7 +65,7 @@ def get_captcha(
 @exception_handler()
 def post_captcha(request: Request, captcha: schemas.ReadCaptcha, db: Session = Depends(get_db)) -> Response:
     db_captcha = captcha_helper.find_captcha(db, captcha.id)
-    if db_captcha.created_at < datetime.datetime.now() - datetime.timedelta(settings.validity_minutes):
+    if (datetime.datetime.now() - db_captcha.created_at) > datetime.timedelta(seconds=settings.validity_seconds):
         raise captcha_helper.CaptchaExpiredException()
     if db_captcha.is_used:
         raise captcha_helper.CaptchaAlreadySolvedException()

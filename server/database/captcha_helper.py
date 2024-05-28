@@ -21,12 +21,12 @@ class CaptchaAlreadySolvedException(CaptchaBaseException):
 
 
 class CaptchaExpiredException(CaptchaBaseException):
-    def __init__(self, detail: str = "Captcha has expired", status_code: int = 400) -> None:
+    def __init__(self, detail: str = "Captcha has expired", status_code: int = 403) -> None:
         super().__init__(detail, status_code)
 
 
 class CaptchaInvalidException(CaptchaBaseException):
-    def __init__(self, detail: str = "Captcha is invalid", status_code: int = 400) -> None:
+    def __init__(self, detail: str = "Captcha is invalid", status_code: int = 403) -> None:
         super().__init__(detail, status_code)
 
 

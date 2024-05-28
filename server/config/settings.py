@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     db_name: str = Field(...)
     captcha_length: int = Field(6)
     alphabet: str = Field("".join(string.ascii_uppercase) + "".join(string.digits))
-    validity_minutes: int = Field(5)
+    validity_seconds: int = Field(300)
 
 
 settings = Settings()
