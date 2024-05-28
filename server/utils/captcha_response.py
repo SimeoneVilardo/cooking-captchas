@@ -27,11 +27,11 @@ class CaptchaJsonResponseHandler(CaptchaResponseHandler):
         return JSONResponse(content=response_data, headers={"X-Captcha-ID": str(id)})
 
 
-class CaptchaJpegResponseHandler(CaptchaResponseHandler):
+class CaptchaPngResponseHandler(CaptchaResponseHandler):
     def handle(self, image_bytes: BytesIO, id: int) -> Response:
         return StreamingResponse(
             content=BytesIO(image_bytes.getvalue()),
-            media_type="image/jpeg",
+            media_type="image/png",
             headers={"X-Captcha-ID": str(id)},
         )
 
@@ -44,7 +44,7 @@ class UnsupportedAcceptHeaderException(ManagedException):
 response_handlers: Dict[str, Type[CaptchaResponseHandler]] = {
     "application/json": CaptchaJsonResponseHandler,
     "*/*": CaptchaJsonResponseHandler,
-    "image/jpeg": CaptchaJpegResponseHandler,
+    "image/png": CaptchaPngResponseHandler,
 }
 
 

@@ -21,7 +21,7 @@ image_generator = ImageCaptcha()
             "description": "Captcha image",
             "content": {
                 "application/json": {"example": {"image": "base64encodedimage", "id": 1}},
-                "image/jpeg": {"schema": {"type": "string", "format": "binary"}, "example": "(binary image data)"},
+                "image/png": {"schema": {"type": "string", "format": "binary"}, "example": "(binary image data)"},
             },
             "headers": {"X-Captcha-ID": {"description": "ID of the captcha", "schema": {"type": "integer"}}},
         },
