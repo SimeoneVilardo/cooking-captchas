@@ -24,9 +24,8 @@ class Captcha(CaptchaBase):
         from_attributes = True
 
 
-class ErrorResponse(BaseModel):
+class CaptchaResponse(BaseModel):
     detail: str
-    status_code: int
 
     class Config:
         from_attributes = True

@@ -1,7 +1,5 @@
-import base64
 import json
-import secrets
-import string
+from fastapi.responses import JSONResponse, StreamingResponse
 from database import schemas, models
 from database.captcha_helper import (
     CaptchaNotFoundException,
@@ -16,32 +14,55 @@ from sqlalchemy.orm import Session
 from config.settings import settings
 from database import captcha_helper
 from routers.limiter import limiter
+from utils.common import generate_secure_string
+from utils.captcha_response import UnsupportedAcceptHeaderException, get_response_handler
 
 
 router = APIRouter(prefix="/captcha")
+image_generator = ImageCaptcha()
 
 
-def generate_secure_string(length: int = settings.captcha_length) -> string:
-    secure_string: string = "".join(secrets.choice(settings.alphabet) for _ in range(length))
-    return secure_string
-
-
-@router.get("/")
+@router.get(
+    "/",
+    responses={
+        200: {
+            "description": "Captcha image",
+            "content": {
+                "application/json": {"example": {"image": "base64encodedimage", "id": 1}},
+                "image/jpeg": {"schema": {"type": "string", "format": "binary"}, "example": "(binary image data)"},
+            },
+            "headers": {"X-Captcha-ID": {"description": "ID of the captcha", "schema": {"type": "integer"}}},
+        },
+        406: {"description": "Unsupported accept header", "model": schemas.CaptchaResponse},
+    },
+    summary="Get Captcha",
+    description="Get a new captcha image.",
+)
 @limiter.limit("10/minute", key_func=lambda: "get_captcha")
 def get_captcha(request: Request, db: Session = Depends(get_db)) -> Response:
-    secure_string: string = generate_secure_string()
+    accept_header = request.headers.get("accept")
+    try:
+        response_handler = get_response_handler(accept_header)
+    except UnsupportedAcceptHeaderException as e:
+        raise HTTPException(status_code=406, detail="Unsupported accept header")
+    secure_string: str = generate_secure_string()
     db_captcha: models.DBCaptcha = captcha_helper.generate_captcha(db, schemas.CreateCaptcha(value=secure_string))
-    image = ImageCaptcha()
-    image_bytes = image.generate(secure_string)
-    image_base64 = base64.b64encode(image_bytes.getvalue()).decode("utf-8")
-    response = {"image": image_base64, "id": db_captcha.id}
-    return Response(
-        content=json.dumps(response),
-        media_type="application/json",
-    )
+    image_bytes = image_generator.generate(secure_string)
+    return response_handler.handle(image_bytes, db_captcha.id)
 
 
-@router.post("/")
+@router.post(
+    "/",
+    response_model=schemas.CaptchaResponse,
+    responses={
+        200: {"description": "Captcha validated successfully", "model": schemas.CaptchaResponse},
+        400: {"description": "Bad Request", "model": schemas.CaptchaResponse},
+        404: {"description": "Captcha not found", "model": schemas.CaptchaResponse},
+        409: {"description": "Captcha already used", "model": schemas.CaptchaResponse},
+    },
+    summary="Validate Captcha",
+    description="Validate the captcha value provided by the user.",
+)
 @limiter.limit("10/minute", key_func=lambda: "post_captcha")
 def post_captcha(request: Request, captcha: schemas.ReadCaptcha, db: Session = Depends(get_db)) -> Response:
     try:
