@@ -1,4 +1,5 @@
 from abc import ABC
+import abc
 import base64
 from io import BytesIO
 from typing import Dict, Type
@@ -10,7 +11,13 @@ from utils.common import ManagedException
 
 
 class CaptchaResponseHandler(ABC):
+    @abc.abstractmethod
     def handle(self, image_bytes: BytesIO, id: int) -> Response: ...
+
+
+class CaptchaUnsupportedResponseHandler(CaptchaResponseHandler):
+    def handle(self, image_bytes: BytesIO, id: int) -> Response:
+        raise UnsupportedAcceptHeaderException("Unsupported accept header")
 
 
 class CaptchaJsonResponseHandler(CaptchaResponseHandler):
@@ -30,7 +37,7 @@ class CaptchaJpegResponseHandler(CaptchaResponseHandler):
 
 
 class UnsupportedAcceptHeaderException(ManagedException):
-    def __init__(self, detail="Unsupported accept header", status_code=406):
+    def __init__(self, detail: str = "Unsupported accept header", status_code: int = 406) -> None:
         super().__init__(detail, status_code)
 
 
@@ -42,9 +49,5 @@ response_handlers: Dict[str, Type[CaptchaResponseHandler]] = {
 
 
 def get_response_handler(accept_header: str) -> CaptchaResponseHandler:
-    if accept_header is None:
-        accept_header = "*/*"
-    handler_class = response_handlers.get(accept_header)
-    if not handler_class:
-        raise UnsupportedAcceptHeaderException(f"Unsupported accept header: {accept_header}")
+    handler_class = response_handlers.get(accept_header, CaptchaUnsupportedResponseHandler)
     return handler_class()

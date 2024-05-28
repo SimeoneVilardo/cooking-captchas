@@ -33,7 +33,7 @@ image_generator = ImageCaptcha()
 @limiter.limit("10/minute", key_func=lambda: "get_captcha")
 @exception_handler()
 def get_captcha(request: Request, db: Session = Depends(get_db)) -> Response:
-    accept_header = request.headers.get("accept")
+    accept_header = request.headers.get("accept", "*/*")
     response_handler = get_response_handler(accept_header)
     secure_string: str = generate_secure_string()
     db_captcha: models.DBCaptcha = captcha_helper.generate_captcha(db, schemas.CreateCaptcha(value=secure_string))

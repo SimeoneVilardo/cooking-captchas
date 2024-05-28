@@ -1,24 +1,28 @@
 import secrets
-import string
 import functools
+from typing import Any, Callable, Optional, Type
+import typing
 
 from fastapi import HTTPException
 from config.settings import settings
 
 
 class ManagedException(Exception):
-    def __init__(self, detail, status_code):
+    def __init__(self, detail: str, status_code: int) -> None:
         super().__init__(detail)
         self.detail = detail
         self.status_code = status_code
 
 
-def generate_secure_string(length: int = settings.captcha_length) -> string:
-    secure_string: string = "".join(secrets.choice(settings.alphabet) for _ in range(length))
+def generate_secure_string(length: int = settings.captcha_length) -> str:
+    secure_string: str = "".join(secrets.choice(settings.alphabet) for _ in range(length))
     return secure_string
 
 
-def exception_handler(exception_type=ManagedException, handler=None):
+@typing.no_type_check
+def exception_handler(
+    exception_type: Type[Exception] = ManagedException, handler: Optional[Callable[[Exception], Any]] = None
+):
     """
     A decorator that wraps a function to handle exceptions.
 

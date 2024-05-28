@@ -11,26 +11,26 @@ class CaptchaBaseException(ManagedException):
 
 
 class CaptchaNotFoundException(CaptchaBaseException):
-    def __init__(self, detail="Captcha not found", status_code=404):
+    def __init__(self, detail: str = "Captcha not found", status_code: int = 404) -> None:
         super().__init__(detail, status_code)
 
 
 class CaptchaAlreadySolvedException(CaptchaBaseException):
-    def __init__(self, detail="Captcha has already been solved", status_code=409):
+    def __init__(self, detail: str = "Captcha has already been solved", status_code: int = 409) -> None:
         super().__init__(detail, status_code)
 
 
 class CaptchaExpiredException(CaptchaBaseException):
-    def __init__(self, detail="Captcha has expired", status_code=400):
+    def __init__(self, detail: str = "Captcha has expired", status_code: int = 400) -> None:
         super().__init__(detail, status_code)
 
 
 class CaptchaInvalidException(CaptchaBaseException):
-    def __init__(self, detail="Captcha is invalid", status_code=400):
+    def __init__(self, detail: str = "Captcha is invalid", status_code: int = 400) -> None:
         super().__init__(detail, status_code)
 
 
-def get_captcha(db: Session, id: int):
+def get_captcha(db: Session, id: int) -> models.DBCaptcha:
     captcha = db.query(models.DBCaptcha).filter(models.DBCaptcha.id == id).first()
     if captcha is None:
         raise CaptchaNotFoundException()
@@ -45,7 +45,7 @@ def generate_captcha(db: Session, captcha: schemas.CreateCaptcha) -> models.DBCa
     return db_captcha
 
 
-def validate_captcha(db: Session, user_captcha: schemas.ReadCaptcha, db_captcha: models.DBCaptcha):
+def validate_captcha(db: Session, user_captcha: schemas.ReadCaptcha, db_captcha: models.DBCaptcha) -> models.DBCaptcha:
     _check_captcha(user_captcha, db_captcha)
     db_captcha.is_used = True
     db.commit()
