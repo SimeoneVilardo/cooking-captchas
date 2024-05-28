@@ -1,21 +1,13 @@
 import json
-from fastapi.responses import JSONResponse, StreamingResponse
 from database import schemas, models
-from database.captcha_helper import (
-    CaptchaNotFoundException,
-    CaptchaAlreadySolvedException,
-    CaptchaExpiredException,
-    CaptchaInvalidException,
-)
 from database.core import get_db
 from captcha.image import ImageCaptcha
-from fastapi import APIRouter, HTTPException, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends, Response
 from sqlalchemy.orm import Session
-from config.settings import settings
 from database import captcha_helper
 from routers.limiter import limiter
 from utils.common import exception_handler, generate_secure_string
-from utils.captcha_response import UnsupportedAcceptHeaderException, get_response_handler
+from utils.captcha_response import get_response_handler
 
 
 router = APIRouter(prefix="/captcha")
