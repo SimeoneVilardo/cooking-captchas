@@ -10,6 +10,8 @@
 !server/**
 !tests/
 !tests/**
+!vscode/
+!vscode/**
 !setup.cfg
 !deploy/
 !deploy/**
