@@ -67,3 +67,4 @@ curl --location 'http://localhost:9000/captcha/' \
 - Manage database migrations (refer: [Alembic](https://alembic.sqlalchemy.org/en/latest/index.html))
 - Fix two warnings in pytest
 - Don't use consecutive IDs for the captcha. For this proof of concept having the integer was useful, but it should be avoided
+- Improve Dockerfile: reduce image size
