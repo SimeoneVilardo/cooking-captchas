@@ -5,10 +5,10 @@ Hi, are you also tired of the usual cooking robots? Try our captcha service!
 
 # How to run the service
 
-This repository contains a backend for a microservice written in Python using FastAPI. You can run the backend using Docker. There is also a PostgreSQL database, which is accessed via SQLAlchemy.
+This repository contains a backend for a microservice written in Python using FastAPI. You can run the backend using Docker Compose. There is also a PostgreSQL database, which is accessed via SQLAlchemy.
 ## Prerequisites
-* git
-* docker
+* Git
+* Docker
 
 ## Steps
 1) Clone the repository
@@ -37,7 +37,7 @@ docker compose run --entrypoint "mypy ." web
 # APIs
 The APIs are documented in the OpenAPI format, which you can consult here: [openapi.yaml](./openapi.yaml).
 Alternatively, you can also run the microservice (even with Docker Compose!) and go to [http://localhost:9000/docs](http://localhost:9000/docs).
-Ci sono due API:
+There are two APIs:
 -   **GET /captcha/** to obtain the captcha image and the captcha id.
 -   **POST /captcha/** to validate a captcha. You need to pass the guessed value of the captcha image and the captcha id in the body to this endpoint.
 
