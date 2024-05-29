@@ -34,4 +34,4 @@ docker/.elasticbeanstalk/
 docker/.elasticbeanstalk/**
 !local_fixtures/
 !local_fixtures/**
-openapi.yaml
+!openapi.yaml

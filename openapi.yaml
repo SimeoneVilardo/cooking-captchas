@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: Cooking Captchas
+  version: 0.1.0
+paths:
+  /captcha/:
+    get:
+      summary: Get Captcha
+      description: Get a new captcha image.
+      operationId: get_captcha_captcha__get
+      responses:
+        "200":
+          description: Captcha image
+          headers:
+            X-Captcha-ID:
+              description: ID of the captcha
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema: {}
+              example:
+                image: base64encodedimage
+                id: 1
+            image/png:
+              schema:
+                type: string
+                format: binary
+              example: (binary image data)
+        "406":
+          description: Unsupported accept header
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptchaResponse"
+    post:
+      summary: Validate Captcha
+      description: Validate the captcha value provided by the user.
+      operationId: post_captcha_captcha__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReadCaptcha"
+        required: true
+      responses:
+        "200":
+          description: Captcha validated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptchaResponse"
+        "403":
+          description: Captcha invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptchaResponse"
+        "404":
+          description: Captcha not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptchaResponse"
+        "409":
+          description: Captcha already used
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptchaResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+components:
+  schemas:
+    CaptchaResponse:
+      properties:
+        detail:
+          type: string
+          title: Detail
+      type: object
+      required:
+        - detail
+      title: CaptchaResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ReadCaptcha:
+      properties:
+        id:
+          type: integer
+          title: Id
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+        - id
+        - value
+      title: ReadCaptcha
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
