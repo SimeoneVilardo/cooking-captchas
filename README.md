@@ -36,7 +36,7 @@ docker compose up -d
 The recommended way to run the tests is in the Docker container. Once the repo has been cloned and the configuration file added, you can run the tests in Docker with the command:
 
 ```
-docker compose run --entrypoint "pytest -v --cov=server server/test" web
+docker compose run --entrypoint "pytest -v --cov=server tests" web
 ```
 
 Or you can also run mypy:
