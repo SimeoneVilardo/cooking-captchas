@@ -1,16 +1,16 @@
 import datetime
 import json
-from database import schemas, models
-from database.core import get_db
+from server.database import schemas, models
+from server.database.core import get_db
 from captcha.image import ImageCaptcha
 from fastapi import APIRouter, Request, Depends, Response
 from sqlalchemy.orm import Session
-from database import captcha_helper
-from routers.limiter import limiter
-from config.settings import settings
-from utils.captcha_generator import CaptchaGenerator, get_captcha_generator
-from utils.common import exception_handler
-from utils.captcha_response import get_response_handler
+from server.database import captcha_helper
+from server.routers.limiter import limiter
+from server.config.settings import settings
+from server.utils.captcha_generator import CaptchaGenerator, get_captcha_generator
+from server.utils.common import exception_handler
+from server.utils.captcha_response import get_response_handler
 
 
 router = APIRouter(prefix="/captcha")

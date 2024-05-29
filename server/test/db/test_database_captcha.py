@@ -4,11 +4,11 @@ from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
-from database.core import get_db
-from main import app
-from database import models
-from database.captcha_helper import find_captcha, create_captcha, update_captcha
-from database.schemas import CreateCaptcha, UpdateCaptcha
+from server.database.core import get_db
+from server.main import app
+from server.database import models
+from server.database.captcha_helper import find_captcha, create_captcha, update_captcha
+from server.database.schemas import CreateCaptcha, UpdateCaptcha
 
 client = TestClient(app)
 

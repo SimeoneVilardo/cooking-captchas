@@ -6,10 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 
-from database.core import get_db
-from database import models
-from main import app
-from utils.captcha_generator import CaptchaGenerator, FakeSecureStringGenerator, get_captcha_generator
+from server.database.core import get_db
+from server.database import models
+from server.main import app
+from server.utils.captcha_generator import CaptchaGenerator, FakeSecureStringGenerator, get_captcha_generator
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 

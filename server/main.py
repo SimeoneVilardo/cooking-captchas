@@ -1,13 +1,13 @@
 import time
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
-from routers.captcha import router as captcha_router
-from database import models
-from database.core import engine
+from server.routers.captcha import router as captcha_router
+from server.database import models
+from server.database.core import engine
 from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
-from routers.limiter import limiter
-from config.settings import settings
+from server.routers.limiter import limiter
+from server.config.settings import settings
 from sqlalchemy.exc import OperationalError
 
 

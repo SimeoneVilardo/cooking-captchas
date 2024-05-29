@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Boolean, DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
-from database.core import Base as Base
+from server.database.core import Base as Base
 
 
 class DBCaptcha(Base):

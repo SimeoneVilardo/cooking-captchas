@@ -21,17 +21,17 @@ cp docker/config/.env.template docker/config/.env
 ```
 2) Run the service
 ```
-docker compose up
+docker compose up -d
 ```
 
 # Tests
 The recommended way to run the tests is in the Docker container. Once the repo has been cloned and the configuration file added, you can run the tests in Docker with the command:
 ```
-docker compose run --entrypoint "pytest -v test" web
+docker-compose run --entrypoint "pytest -v --cov=server server/test" web
 ```
 Or you can also run mypy:
 ```
-docker compose run --entrypoint "mypy ." web
+docker compose run --entrypoint "mypy server" web
 ```
 
 # APIs

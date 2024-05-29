@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
-from config.settings import settings
+from server.config.settings import settings
 from typing import Iterator
 
 SQLALCHEMY_DATABASE_URL = (

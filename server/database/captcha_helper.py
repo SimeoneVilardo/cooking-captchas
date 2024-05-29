@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from database import models, schemas
-from utils.common import ManagedException
+from server.database import models, schemas
+from server.utils.common import ManagedException
 
 
 class CaptchaBaseException(ManagedException):

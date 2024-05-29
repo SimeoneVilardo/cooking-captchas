@@ -7,7 +7,7 @@ from typing import Dict, Type
 from fastapi import Response
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from utils.common import ManagedException
+from server.utils.common import ManagedException
 
 
 class CaptchaResponseHandler(ABC):

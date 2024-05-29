@@ -1,6 +1,6 @@
 import string
 import pytest
-from utils.captcha_generator import SecureStringGenerator
+from server.utils.captcha_generator import SecureStringGenerator
 
 
 @pytest.mark.parametrize(
