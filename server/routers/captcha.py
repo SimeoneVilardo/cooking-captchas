@@ -53,8 +53,7 @@ def get_captcha(
     response_model=schemas.CaptchaResponse,
     responses={
         200: {"description": "Captcha validated successfully", "model": schemas.CaptchaResponse},
-        403: {"description": "Captcha invalid", "model": schemas.CaptchaResponse},
-        403: {"description": "Captcha has expired", "model": schemas.CaptchaResponse},
+        403: {"description": "Captcha invalid or expired", "model": schemas.CaptchaResponse},
         404: {"description": "Captcha not found", "model": schemas.CaptchaResponse},
         409: {"description": "Captcha already used", "model": schemas.CaptchaResponse},
     },
