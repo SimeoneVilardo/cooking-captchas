@@ -8,6 +8,8 @@
 !CHANGELOG.md
 !server/
 !server/**
+!tests/
+!tests/**
 !setup.cfg
 !deploy/
 !deploy/**
