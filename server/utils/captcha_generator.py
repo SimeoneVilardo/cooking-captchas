@@ -3,7 +3,7 @@ import abc
 from io import BytesIO
 import secrets
 import string
-from typing import Dict, Iterator, TypedDict
+from typing import TypedDict
 from captcha.image import ImageCaptcha
 
 

@@ -1,6 +1,4 @@
-import datetime
 from sqlalchemy.orm import Session
-from config.settings import settings
 
 from database import models, schemas
 from utils.common import ManagedException

@@ -1,4 +1,3 @@
-import string
 import pytest
 from utils.captcha_generator import CaptchaGenerator, FakeSecureStringGenerator
 

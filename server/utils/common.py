@@ -1,10 +1,8 @@
-import secrets
 import functools
 from typing import Any, Callable, Optional, Type
 import typing
 
 from fastapi import HTTPException
-from config.settings import settings
 
 
 class ManagedException(Exception):
